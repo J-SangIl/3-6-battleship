@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>배틀쉽 좌표평면 게임 (Battleship Coordinate Game)</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet link -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Left Panel: Radar Board Grid -->
+    <div class="left-panel">
+      <div class="card-container border-glow">
+        <div class="radar-header">
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span class="indicator-text">COORDINATE RADAR SCOPE</span>
+          </div>
+          <div class="coordinate-bounds font-mono">X, Y: [-6, 6]</div>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="radarCanvas"></canvas>
+        </div>
+        <div class="radar-footer">
+          <div class="coordinate-helper">
+             원점 (0,0)은 중앙 빨간 점입니다. 상하좌우 간격은 1단위입니다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: UI & Controls -->
+    <div class="right-panel">
+      <!-- Game Info Display -->
+      <div class="ui-card info-card">
+        <h2 class="section-title">작동 상태</h2>
+        <div id="statusText" class="status-msg text-pulse">대기 중 - 적을 탐색하세요.</div>
+      </div>
+
+      <!-- Main Action Controller -->
+      <div class="ui-card action-card">
+        <button id="mainBtn" class="btn btn-primary font-bold">적 위치 확인</button>
+      </div>
+
+      <!-- Whiteboard Canvas Drawing Grid -->
+      <div class="ui-card whiteboard-card">
+        <div class="whiteboard-header">
+          <h2 class="section-title">전자 화이트보드 (메모용)</h2>
+          <button id="clearWhiteboardBtn" class="btn btn-outline btn-xs">지우기</button>
+        </div>
+        <div class="whiteboard-wrapper">
+          <canvas id="whiteboardCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- System Controls (Grid Toggle, Reset) -->
+      <div class="ui-card control-card">
+        <h2 class="section-title">시스템 제어</h2>
+        <div class="control-grid">
+          <button id="toggleGridBtn" class="btn btn-outline">격자 ON</button>
+          <button id="restartBtn" class="btn btn-danger font-bold">다시 시작</button>
+        </div>
+      </div>
+
+      <!-- Footer Branding / Education Note -->
+      <div class="education-info font-mono">
+        <p>중학교 1학년 수학: 좌표평면과 그래프</p>
+        <p class="text-[10px] text-gray-500">배틀쉽 좌표 학습 시뮬레이터 v1.0</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>

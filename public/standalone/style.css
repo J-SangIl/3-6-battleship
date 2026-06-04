@@ -1,0 +1,322 @@
+/* ==========================================================================
+   배틀쉽 좌표평면 게임 (Battleship Coordinate Game) Style Rules
+   ========================================================================== */
+
+/* Font & Global resets */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc; /* Sleek, clean light-gray backdrop */
+  color: #1e293b;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* App Layout Grid Container */
+.app-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* Symmetrical Panels spacing */
+.left-panel {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right-panel {
+  flex: 0.8;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* Radar Dark Card */
+.card-container {
+  background-color: #060b14; /* Deep outer space-themed blackness */
+  width: 100%;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 
+              0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  border: 1px solid #111827;
+  transition: box-shadow 0.3s ease;
+}
+
+.border-glow {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.1), 
+              0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Radar Headers, Subtitle rules */
+.radar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.2);
+  padding-bottom: 12px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulse-glow 2s infinite;
+}
+
+.indicator-text {
+  font-size: 11px;
+  color: #10b981;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.coordinate-bounds {
+  font-size: 11px;
+  color: #6b7280;
+  background: rgba(31, 41, 55, 0.6);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Canvas Wrapper with flexible responsive layout constraints */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1; /* Keeps it perfectly square */
+  background-color: #030712;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+#radarCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.radar-footer {
+  margin-top: 16px;
+  color: #4b5563;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Right Panel UI Elements & Cards */
+.ui-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 
+              0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+/* Status Panel styling rules */
+.status-msg {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.text-pulse {
+  animation: text-pulse-soft 2s infinite ease-in-out;
+}
+
+/* Button UI styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-primary:disabled {
+  background-color: #94a3b8;
+  color: #e2e8f0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-outline:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-outline.active {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #0f172a;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn-xs {
+  padding: 6px 12px;
+  font-size: 11px;
+  border-radius: 6px;
+  width: auto;
+}
+
+/* Whiteboard elements styling */
+.whiteboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.whiteboard-wrapper {
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  position: relative;
+  overflow: hidden;
+}
+
+#whiteboardCanvas {
+  display: block;
+  width: 100%;
+  height: 160px;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>') 2 14, crosshair;
+  touch-action: none;
+}
+
+/* Control box utility configurations */
+.control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.education-info {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+/* Keyframe Animations definition spec */
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.9);
+  }
+}
+
+@keyframes text-pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Mobile responsive queries constraints */
+@media (max-width: 900px) {
+  .app-container {
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .left-panel, .right-panel {
+    width: 100%;
+  }
+
+  .left-panel {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}

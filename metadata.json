@@ -1,0 +1,6 @@
+{
+  "name": "Battleship Coordinate Game",
+  "description": "중학교 1학년 수학 '좌표평면과 그래프' 단원을 위한 배틀쉽(Battleship) 컨셉의 교육용 웹앱",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
