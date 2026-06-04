@@ -46,7 +46,6 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
 
   useEffect(() => {
     const img = new Image();
-    img.src = enemyShipImg;
     img.onload = () => {
       // Process image to remove white background dynamically
       const offscreen = document.createElement('canvas');
@@ -77,6 +76,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
         setShipImage(img);
       }
     };
+    img.src = enemyShipImg;
   }, []);
 
   // Maintain symmetry $[-6.5, 6.5]$ in the view matrix so $[-6, 6]$ is fully inside with marginal padding.
