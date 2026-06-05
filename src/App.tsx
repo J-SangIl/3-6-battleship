@@ -1,13 +1,14 @@
 import { useState, useRef } from 'react';
 import { RadarBoard, GameState, Point } from './components/RadarBoard';
 import { Whiteboard, WhiteboardHandle } from './components/Whiteboard';
-import { RefreshCw, Grid, Shield } from 'lucide-react';
+import { RefreshCw, Grid, Shield, Radio } from 'lucide-react';
 
 const HIT_RADIUS = 0.5; // 포탄 명중 성공 오차 범위 (난이도 조절용 상수)
 
 export default function App() {
   const [gameState, setGameState] = useState<GameState>(GameState.INITIAL);
   const [showGrid, setShowGrid] = useState<boolean>(false);
+  const [showRadar, setShowRadar] = useState<boolean>(true);
   const [enemyPos, setEnemyPos] = useState<Point | null>(null);
   const [enemyEmoji, setEnemyEmoji] = useState<string>('✈️');
   const [targetPos, setTargetPos] = useState<Point | null>(null);
@@ -114,6 +115,11 @@ export default function App() {
     setShowGrid(!showGrid);
   };
 
+  // Toggle radar sweep wave trigger
+  const handleToggleRadar = () => {
+    setShowRadar(!showRadar);
+  };
+
   // Full reset trigger
   const handleResetGame = () => {
     setGameState(GameState.INITIAL);
@@ -183,6 +189,7 @@ export default function App() {
           <RadarBoard
             gameState={gameState}
             showGrid={showGrid}
+            showRadar={showRadar}
             enemyPos={enemyPos}
             enemyEmoji={enemyEmoji}
             targetPos={targetPos}
@@ -220,9 +227,9 @@ export default function App() {
           </div>
         </article>
 
-        {/* 2. Main Action controller triggers */}
-        {(gameState !== GameState.RESULT || isFiring) && (
-          <article className="flex flex-col">
+        {/* 2. Main Action controller triggers & Restart */}
+        <article className="flex flex-col gap-2.5">
+          {(gameState !== GameState.RESULT || isFiring) && (
             <button
               onClick={handleMainActionClick}
               disabled={gameState === GameState.AIMING && !targetPos}
@@ -231,8 +238,17 @@ export default function App() {
             >
               <span>{getMainBtnLabel()}</span>
             </button>
-          </article>
-        )}
+          )}
+
+          <button
+            onClick={handleResetGame}
+            className="w-full py-2.5 px-4 text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white rounded-[12px] transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-sm"
+            id="reset-game-button"
+          >
+            <RefreshCw className="w-3.5 h-3.5 opacity-90" />
+            <span>다시 시작</span>
+          </button>
+        </article>
 
         {/* 3. Electronic whiteboard drawing region */}
         <article className="flex flex-col gap-2">
@@ -250,29 +266,33 @@ export default function App() {
           <Whiteboard ref={whiteboardRef} />
         </article>
 
-        {/* 4. Utility Controls - Grid toggles and Game Restart */}
+        {/* 4. Utility Controls - Grid toggles and Radar sweep toggles */}
         <article className="flex flex-col gap-2">
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={handleToggleGrid}
-              className={`py-3 px-4 text-xs font-semibold rounded-[12px] border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-3 px-2 text-xs font-semibold rounded-[12px] border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                 showGrid
-                  ? 'bg-slate-100 border-[#0a192f] text-[#0a192f] font-bold shadow-inner'
+                  ? 'bg-sky-500 border-sky-600 text-white font-bold shadow-md'
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
               id="grid-toggle-button"
             >
-              <Grid className="w-4 h-4 opacity-80" />
+              <Grid className="w-4 h-4 opacity-90" />
               <span>격자 {showGrid ? 'OFF' : 'ON'}</span>
             </button>
 
             <button
-              onClick={handleResetGame}
-              className="py-3 px-4 text-xs font-semibold bg-[#ef4444] border border-transparent hover:bg-red-600 text-white rounded-[12px] transition-all cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
-              id="reset-game-button"
+              onClick={handleToggleRadar}
+              className={`py-3 px-2 text-xs font-semibold rounded-[12px] border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                showRadar
+                  ? 'bg-teal-500 border-teal-600 text-white font-bold shadow-md'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              id="radar-toggle-button"
             >
-              <RefreshCw className="w-4 h-4 opacity-80" />
-              <span>다시 시작</span>
+              <Radio className="w-4 h-4 opacity-90" />
+              <span>레이더 {showRadar ? 'OFF' : 'ON'}</span>
             </button>
           </div>
         </article>

@@ -17,6 +17,7 @@ export interface Point {
 interface RadarBoardProps {
   gameState: GameState;
   showGrid: boolean;
+  showRadar: boolean;
   enemyPos: Point | null;
   enemyEmoji: string;
   targetPos: Point | null;
@@ -30,6 +31,7 @@ interface RadarBoardProps {
 export const RadarBoard: React.FC<RadarBoardProps> = ({
   gameState,
   showGrid,
+  showRadar,
   enemyPos,
   enemyEmoji,
   targetPos,
@@ -240,33 +242,35 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
 
       // 3. Status 2 Scan line & Blinking Enemy
       if (gameState === GameState.OBSERVATION) {
-        // 복원: 시계 방향 회전 레이더 빔 효과
-        const angle = elapsedSeconds * 1.5; // Custom speed of swept line
-        const rLen = size * 0.9;
-        const targetX = Math.cos(angle) * rLen;
-        const targetY = Math.sin(angle) * rLen;
+        if (showRadar) {
+          // 복원: 시계 방향 회전 레이더 빔 효과
+          const angle = elapsedSeconds * 1.5; // Custom speed of swept line
+          const rLen = size * 0.9;
+          const targetX = Math.cos(angle) * rLen;
+          const targetY = Math.sin(angle) * rLen;
 
-        // Draw sweeping scan segment
-        ctx.beginPath();
-        ctx.moveTo(centerPx.x, centerPx.y);
-        ctx.lineTo(centerPx.x + targetX, centerPx.y + targetY);
-        ctx.lineWidth = 4; // Bolder sweep indicator
-        const sweepGradLine = ctx.createLinearGradient(centerPx.x, centerPx.y, centerPx.x + targetX, centerPx.y + targetY);
-        sweepGradLine.addColorStop(0, 'rgba(14, 165, 233, 0.75)'); // Glowing sky-blue
-        sweepGradLine.addColorStop(1, 'rgba(14, 165, 233, 0)');
-        ctx.strokeStyle = sweepGradLine;
-        ctx.stroke();
+          // Draw sweeping scan segment
+          ctx.beginPath();
+          ctx.moveTo(centerPx.x, centerPx.y);
+          ctx.lineTo(centerPx.x + targetX, centerPx.y + targetY);
+          ctx.lineWidth = 4; // Bolder sweep indicator
+          const sweepGradLine = ctx.createLinearGradient(centerPx.x, centerPx.y, centerPx.x + targetX, centerPx.y + targetY);
+          sweepGradLine.addColorStop(0, 'rgba(14, 165, 233, 0.75)'); // Glowing sky-blue
+          sweepGradLine.addColorStop(1, 'rgba(14, 165, 233, 0)');
+          ctx.strokeStyle = sweepGradLine;
+          ctx.stroke();
 
-        // Draw sweep gradient fan for beautiful cyber feel
-        ctx.beginPath();
-        ctx.moveTo(centerPx.x, centerPx.y);
-        ctx.arc(centerPx.x, centerPx.y, size * 0.8, angle - 0.3, angle, false);
-        ctx.closePath();
-        const scanGrad = ctx.createRadialGradient(centerPx.x, centerPx.y, 0, centerPx.x, centerPx.y, size * 0.8);
-        scanGrad.addColorStop(0, 'rgba(14, 165, 233, 0.18)'); // Soft cyber fan glow
-        scanGrad.addColorStop(1, 'rgba(14, 165, 233, 0.0)');
-        ctx.fillStyle = scanGrad;
-        ctx.fill();
+          // Draw sweep gradient fan for beautiful cyber feel
+          ctx.beginPath();
+          ctx.moveTo(centerPx.x, centerPx.y);
+          ctx.arc(centerPx.x, centerPx.y, size * 0.8, angle - 0.3, angle, false);
+          ctx.closePath();
+          const scanGrad = ctx.createRadialGradient(centerPx.x, centerPx.y, 0, centerPx.x, centerPx.y, size * 0.8);
+          scanGrad.addColorStop(0, 'rgba(14, 165, 233, 0.18)'); // Soft cyber fan glow
+          scanGrad.addColorStop(1, 'rgba(14, 165, 233, 0.0)');
+          ctx.fillStyle = scanGrad;
+          ctx.fill();
+        }
 
         // Blinking Enemy
         if (enemyPos) {
@@ -403,7 +407,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [size, gameState, showGrid, enemyPos, enemyEmoji, targetPos, missileProgress, isFiring, isHit, explosionActive, shipImage]);
+  }, [size, gameState, showGrid, showRadar, enemyPos, enemyEmoji, targetPos, missileProgress, isFiring, isHit, explosionActive, shipImage]);
 
   return (
     <div
