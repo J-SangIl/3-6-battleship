@@ -172,7 +172,7 @@ export default function App() {
     <div className="min-h-screen w-full bg-[#f8fafc] flex flex-col md:flex-row text-[#1e293b] select-none" id="main-app-container">
       {/* LEFT PANEL: Tactical Coordinate Radar Scope Canvas */}
       <section className="flex-grow bg-[#f1f5f9] flex flex-col items-center justify-center p-6 md:p-10 relative md:min-h-screen">
-        <div className="w-full max-w-[600px] flex flex-col">
+        <div className="w-full max-w-[min(720px,78vh)] flex flex-col">
           {/* Canvas Viewport mapping */}
           <RadarBoard
             gameState={gameState}
@@ -231,7 +231,7 @@ export default function App() {
         {/* 3. Electronic whiteboard drawing region */}
         <article className="flex flex-col gap-2">
           <div className="flex justify-between items-center bg-transparent">
-            <h2 className="text-[12px] uppercase tracking-[1.5px] font-bold text-[#64748b]">전자 화이트보드 (메모)</h2>
+            <h2 className="text-[12px] uppercase tracking-[1.5px] font-bold text-[#64748b]">적 함선 위치</h2>
             <button
               onClick={handleClearWhiteboard}
               className="text-[11px] font-bold text-slate-500 hover:text-red-500 border border-slate-200 hover:border-red-200 px-2.5 py-0.5 rounded transition-colors bg-white hover:bg-rose-50 cursor-pointer"

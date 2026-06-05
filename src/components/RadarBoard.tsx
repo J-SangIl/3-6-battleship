@@ -200,19 +200,42 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
 
         // Y Axis line
         const yStart = toPixel(0, -6);
-        const yEnd = toPixel(0, 6);
+        const yEnd = toPixel(0, 6.2); // Extended slightly to top for arrow
         ctx.beginPath();
         ctx.moveTo(yStart.x, yStart.y);
         ctx.lineTo(yEnd.x, yEnd.y);
         ctx.stroke();
 
         // X Axis line
-        const xStart = toPixel(-6, 0);
+        const xStart = toPixel(-6.2, 0); // Extended slightly to left for arrow
         const xEnd = toPixel(6, 0);
         ctx.beginPath();
         ctx.moveTo(xStart.x, xStart.y);
         ctx.lineTo(xEnd.x, xEnd.y);
         ctx.stroke();
+
+        // Draw arrowheads at Y-axis top (pointing up) and X-axis left (pointing left)
+        const arrowH = Math.max(10, size * 0.018);
+        const arrowW = arrowH * 0.5;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(2, 132, 199, 0.65)';
+        
+        ctx.beginPath();
+        ctx.moveTo(yEnd.x, yEnd.y);
+        ctx.lineTo(yEnd.x - arrowW, yEnd.y + arrowH);
+        ctx.lineTo(yEnd.x + arrowW, yEnd.y + arrowH);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(xStart.x, xStart.y);
+        ctx.lineTo(xStart.x + arrowH, xStart.y - arrowW);
+        ctx.lineTo(xStart.x + arrowH, xStart.y + arrowW);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
       }
 
       // 3. Status 2 Scan line & Blinking Enemy
