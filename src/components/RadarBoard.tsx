@@ -240,8 +240,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
 
       // 3. Status 2 Scan line & Blinking Enemy
       if (gameState === GameState.OBSERVATION) {
-        /*
-        // 임시 비활성화: 시계 방향 회전 레이더 빔 효과 (나중에 요청 시 다시 추가할 수 있도록 보존)
+        // 복원: 시계 방향 회전 레이더 빔 효과
         const angle = elapsedSeconds * 1.5; // Custom speed of swept line
         const rLen = size * 0.9;
         const targetX = Math.cos(angle) * rLen;
@@ -268,7 +267,6 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
         scanGrad.addColorStop(1, 'rgba(14, 165, 233, 0.0)');
         ctx.fillStyle = scanGrad;
         ctx.fill();
-        */
 
         // Blinking Enemy
         if (enemyPos) {
