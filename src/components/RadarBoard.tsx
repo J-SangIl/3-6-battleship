@@ -278,7 +278,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
           ctx.save();
           ctx.globalAlpha = opacity;
           if (shipImage) {
-            const width = Math.max(34, size / 8);
+            const width = Math.max(34, size / 8) * 0.8;
             const height = width * (shipImage.height / shipImage.width || 0.4);
             ctx.drawImage(shipImage, ePx.x - width / 2, ePx.y - height / 2, width, height);
           } else {
@@ -350,7 +350,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
           ctx.save();
 
           if (shipImage) {
-            const width = Math.max(34, size / 8);
+            const width = Math.max(34, size / 8) * 0.8;
             const height = width * (shipImage.height / shipImage.width || 0.4);
             ctx.drawImage(shipImage, ePx.x - width / 2, ePx.y - height / 2, width, height);
           } else {
