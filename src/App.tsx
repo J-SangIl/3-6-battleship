@@ -171,8 +171,8 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-[#f8fafc] flex flex-col md:flex-row text-[#1e293b] select-none" id="main-app-container">
       {/* LEFT PANEL: Tactical Coordinate Radar Scope Canvas */}
-      <section className="flex-grow bg-[#f1f5f9] flex flex-col items-center justify-center p-6 md:p-10 relative md:min-h-screen">
-        <div className="w-full max-w-[min(720px,78vh)] flex flex-col">
+      <section className="flex-grow bg-[#f1f5f9] flex flex-col items-center justify-center p-4 md:p-6 relative md:min-h-screen">
+        <div className="w-full max-w-[min(900px,88vh)] flex flex-col">
           {/* Canvas Viewport mapping */}
           <RadarBoard
             gameState={gameState}
