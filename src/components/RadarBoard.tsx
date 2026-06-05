@@ -164,8 +164,8 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
 
       const centerPx = toPixel(0, 0);
 
-      // 1. Clear with crisp white/light-blue background
-      ctx.fillStyle = '#ffffff';
+      // 1. Clear with crisp white/light-blue background (연한 하늘색 배경)
+      ctx.fillStyle = '#e0f2fe';
       ctx.fillRect(0, 0, size, size);
 
       // 2. Draw Grid and Coordinates if turned ON
@@ -207,14 +207,14 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
         ctx.stroke();
 
         // X Axis line
-        const xStart = toPixel(-6.2, 0); // Extended slightly to left for arrow
-        const xEnd = toPixel(6, 0);
+        const xStart = toPixel(-6, 0);
+        const xEnd = toPixel(6.2, 0); // Extended slightly to right for arrow
         ctx.beginPath();
         ctx.moveTo(xStart.x, xStart.y);
         ctx.lineTo(xEnd.x, xEnd.y);
         ctx.stroke();
 
-        // Draw arrowheads at Y-axis top (pointing up) and X-axis left (pointing left)
+        // Draw arrowheads at Y-axis top (pointing up) and X-axis right (pointing right)
         const arrowH = Math.max(10, size * 0.018);
         const arrowW = arrowH * 0.5;
 
@@ -229,9 +229,9 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
         ctx.fill();
 
         ctx.beginPath();
-        ctx.moveTo(xStart.x, xStart.y);
-        ctx.lineTo(xStart.x + arrowH, xStart.y - arrowW);
-        ctx.lineTo(xStart.x + arrowH, xStart.y + arrowW);
+        ctx.moveTo(xEnd.x, xEnd.y);
+        ctx.lineTo(xEnd.x - arrowH, xEnd.y - arrowW);
+        ctx.lineTo(xEnd.x - arrowH, xEnd.y + arrowW);
         ctx.closePath();
         ctx.fill();
 
@@ -240,7 +240,8 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
 
       // 3. Status 2 Scan line & Blinking Enemy
       if (gameState === GameState.OBSERVATION) {
-        // Sweeping scanner line
+        /*
+        // 임시 비활성화: 시계 방향 회전 레이더 빔 효과 (나중에 요청 시 다시 추가할 수 있도록 보존)
         const angle = elapsedSeconds * 1.5; // Custom speed of swept line
         const rLen = size * 0.9;
         const targetX = Math.cos(angle) * rLen;
@@ -267,6 +268,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
         scanGrad.addColorStop(1, 'rgba(14, 165, 233, 0.0)');
         ctx.fillStyle = scanGrad;
         ctx.fill();
+        */
 
         // Blinking Enemy
         if (enemyPos) {
@@ -408,7 +410,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-square bg-[#ffffff] rounded-[24px] overflow-hidden shadow-lg border border-slate-300"
+      className="relative w-full aspect-square bg-[#e0f2fe] rounded-[24px] overflow-hidden shadow-lg border border-slate-300"
       id="radar-board-container"
     >
       <canvas
