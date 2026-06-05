@@ -36,8 +36,14 @@ export default function App() {
 
   // Setup a new wave
   const initEnemy = () => {
-    const x = generateRandomCoordinate();
-    const y = generateRandomCoordinate();
+    let x = generateRandomCoordinate();
+    let y = generateRandomCoordinate();
+
+    // x좌표 절댓값 + y좌표 절댓값의 합이 4 이상이 되도록 함
+    while (Math.abs(x) + Math.abs(y) < 4) {
+      x = generateRandomCoordinate();
+      y = generateRandomCoordinate();
+    }
 
     setEnemyPos({ x, y });
     setEnemyEmoji('✈️');
