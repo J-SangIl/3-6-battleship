@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { RadarBoard, GameState, Point } from './components/RadarBoard';
 import { Whiteboard, WhiteboardHandle } from './components/Whiteboard';
-import { RefreshCw, Grid, Shield, Radio } from 'lucide-react';
+import { RefreshCw, Grid, Shield, Radio, Clock } from 'lucide-react';
 
 const HIT_RADIUS = 0.5; // 포탄 명중 성공 오차 범위 (난이도 조절용 상수)
 
@@ -12,6 +12,35 @@ export default function App() {
   const [enemyPos, setEnemyPos] = useState<Point | null>(null);
   const [enemyEmoji, setEnemyEmoji] = useState<string>('✈️');
   const [targetPos, setTargetPos] = useState<Point | null>(null);
+
+  // Timer Configuration & State
+  const [observationLimit, setObservationLimit] = useState<number>(30);
+  const [aimingLimit, setAimingLimit] = useState<number>(30);
+  const [timeLeft, setTimeLeft] = useState<number>(30);
+
+  // Sync / Reset timer value when entering a state
+  useEffect(() => {
+    if (gameState === GameState.OBSERVATION) {
+      setTimeLeft(observationLimit);
+    } else if (gameState === GameState.AIMING) {
+      setTimeLeft(aimingLimit);
+    } else {
+      setTimeLeft(0);
+    }
+  }, [gameState]);
+
+  // Countdown timer clock interval
+  useEffect(() => {
+    if (gameState !== GameState.OBSERVATION && gameState !== GameState.AIMING) {
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setTimeLeft((prev) => Math.max(0, prev - 0.1));
+    }, 100);
+
+    return () => clearInterval(timerId);
+  }, [gameState]);
 
   // Animations State
   const [isFiring, setIsFiring] = useState<boolean>(false);
@@ -62,8 +91,14 @@ export default function App() {
     if (gameState === GameState.INITIAL) {
       initEnemy();
     } else if (gameState === GameState.OBSERVATION) {
+      setGameState(GameState.WAITING_FOR_AIMING);
+    } else if (gameState === GameState.WAITING_FOR_AIMING) {
       setGameState(GameState.AIMING);
     } else if (gameState === GameState.AIMING) {
+      if (targetPos) {
+        setGameState(GameState.AIMING_COMPLETED);
+      }
+    } else if (gameState === GameState.AIMING_COMPLETED) {
       if (targetPos) {
         triggerFiringAnimation();
       }
@@ -144,8 +179,12 @@ export default function App() {
         return '대기 중';
       case GameState.OBSERVATION:
         return '위치 관측 중';
+      case GameState.WAITING_FOR_AIMING:
+        return '관측 완료 (아래 조준 시작 버튼을 누르세요)';
       case GameState.AIMING:
-        return '조준 대기';
+        return '조준 중';
+      case GameState.AIMING_COMPLETED:
+        return '조준 완료 (아래 포탄 발사 버튼을 누르세요)';
       case GameState.RESULT:
         if (isFiring) {
           return '포탄 발사 중';
@@ -173,7 +212,11 @@ export default function App() {
         return '적 위치 확인';
       case GameState.OBSERVATION:
         return '위치 작성 완료';
+      case GameState.WAITING_FOR_AIMING:
+        return '조준 시작';
       case GameState.AIMING:
+        return '조준 완료';
+      case GameState.AIMING_COMPLETED:
         return '포탄 발사';
       case GameState.RESULT:
         return '사격 대기';
@@ -219,11 +262,33 @@ export default function App() {
         </header>
 
         {/* 1. Status Display block */}
-        <article className="bg-[#f8fafc] rounded-[16px] p-4 border border-[#e2e8f0] flex flex-col">
-          <div className="min-h-[44px] flex items-center justify-center text-center" id="state-text-panel">
-            <div className="text-[15px] font-bold text-[#1e293b] leading-[1.45]">
-              {getStatusText()}
-            </div>
+        <article className="bg-[#f8fafc] rounded-[16px] p-5 border border-[#e2e8f0] flex flex-col items-center justify-center min-h-[108px] transition-all">
+          <div className="w-full flex flex-col items-center justify-center text-center gap-1" id="state-text-panel">
+            {gameState !== GameState.OBSERVATION && gameState !== GameState.AIMING ? (
+              <div className="text-base font-bold text-[#1e293b] leading-[1.45]">
+                {getStatusText()}
+              </div>
+            ) : (
+              /* Giant Timer Display */
+              <div className="flex flex-col items-center justify-center w-full">
+                <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-1 flex items-center gap-1">
+                  <Clock className={`w-3 h-3 ${timeLeft <= 5 ? 'text-rose-500 animate-pulse' : ''}`} />
+                  남은 시간
+                </span>
+                <div 
+                  className={`font-mono transition-all duration-200 select-none ${
+                    timeLeft <= 0 
+                      ? 'text-rose-600 font-extrabold text-5xl animate-pulse filter drop-shadow-[0_2px_10px_rgba(225,29,72,0.3)]' 
+                      : timeLeft <= 5 
+                        ? 'text-rose-500 font-extrabold text-4xl animate-pulse'
+                        : 'text-[#0a192f] font-extrabold text-4xl'
+                  }`}
+                  id="giant-countdown-timer"
+                >
+                  {timeLeft.toFixed(1)}<span className="text-xl font-bold ml-0.5">초</span>
+                </div>
+              </div>
+            )}
           </div>
         </article>
 
@@ -294,6 +359,74 @@ export default function App() {
               <Radio className="w-4 h-4 opacity-90" />
               <span>레이더 {showRadar ? 'OFF' : 'ON'}</span>
             </button>
+          </div>
+        </article>
+
+        {/* 5. Timer Settings Configuration */}
+        <article className="flex flex-col gap-2.5 p-3.5 bg-slate-50 rounded-[12px] border border-slate-200" id="timer-config-panel">
+          <div className="flex items-center gap-1.5 text-slate-700">
+            <Clock className="w-4 h-4 text-slate-500" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600">제한 시간 설정 (초)</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-1">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="obs-timer-limit" className="text-[11px] font-semibold text-slate-500">관측 단계 (설명)</label>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setObservationLimit(prev => Math.max(1, prev - 1))}
+                  className="w-7 h-7 flex items-center justify-center bg-white border border-slate-200 rounded-[6px] text-slate-600 font-bold hover:bg-slate-100 cursor-pointer feedback-btn"
+                  id="obs-minus-btn"
+                >
+                  -
+                </button>
+                <input
+                  id="obs-timer-limit"
+                  type="number"
+                  min="1"
+                  value={observationLimit}
+                  onChange={(e) => setObservationLimit(Math.max(1, parseInt(e.target.value) || 0))}
+                  className="w-12 text-xs py-1 border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 text-center font-semibold text-slate-700 bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => setObservationLimit(prev => prev + 1)}
+                  className="w-7 h-7 flex items-center justify-center bg-white border border-slate-200 rounded-[6px] text-slate-600 font-bold hover:bg-slate-100 cursor-pointer feedback-btn"
+                  id="obs-plus-btn"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="aim-timer-limit" className="text-[11px] font-semibold text-slate-500">조준 단계 (사격)</label>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setAimingLimit(prev => Math.max(1, prev - 1))}
+                  className="w-7 h-7 flex items-center justify-center bg-white border border-slate-200 rounded-[6px] text-slate-600 font-bold hover:bg-slate-100 cursor-pointer feedback-btn"
+                  id="aim-minus-btn"
+                >
+                  -
+                </button>
+                <input
+                  id="aim-timer-limit"
+                  type="number"
+                  min="1"
+                  value={aimingLimit}
+                  onChange={(e) => setAimingLimit(Math.max(1, parseInt(e.target.value) || 0))}
+                  className="w-12 text-xs py-1 border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 text-center font-semibold text-slate-700 bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => setAimingLimit(prev => prev + 1)}
+                  className="w-7 h-7 flex items-center justify-center bg-white border border-slate-200 rounded-[6px] text-slate-600 font-bold hover:bg-slate-100 cursor-pointer feedback-btn"
+                  id="aim-plus-btn"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
         </article>
       </section>

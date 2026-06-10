@@ -5,7 +5,9 @@ import enemyShipImg from '../assets/images/enemy_fighter_jet_1780567377889.png';
 export enum GameState {
   INITIAL = 'INITIAL',
   OBSERVATION = 'OBSERVATION',
+  WAITING_FOR_AIMING = 'WAITING_FOR_AIMING',
   AIMING = 'AIMING',
+  AIMING_COMPLETED = 'AIMING_COMPLETED',
   RESULT = 'RESULT'
 }
 
@@ -369,7 +371,7 @@ export const RadarBoard: React.FC<RadarBoardProps> = ({
       }
 
       // 6. Draw Target Crosshair (State 3 & 4) layered on top of ship and visuals
-      if ((gameState === GameState.AIMING || gameState === GameState.RESULT) && targetPos) {
+      if ((gameState === GameState.AIMING || gameState === GameState.AIMING_COMPLETED || gameState === GameState.RESULT) && targetPos) {
         const tPx = toPixel(targetPos.x, targetPos.y);
         const radius = size * 0.04; // Adaptive size
         
