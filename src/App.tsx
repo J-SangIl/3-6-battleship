@@ -180,11 +180,11 @@ export default function App() {
       case GameState.OBSERVATION:
         return '위치 관측 중';
       case GameState.WAITING_FOR_AIMING:
-        return '관측 완료 (아래 조준 시작 버튼을 누르세요)';
+        return '관측 완료';
       case GameState.AIMING:
         return '조준 중';
       case GameState.AIMING_COMPLETED:
-        return '조준 완료 (아래 포탄 발사 버튼을 누르세요)';
+        return '조준 완료';
       case GameState.RESULT:
         if (isFiring) {
           return '포탄 발사 중';
